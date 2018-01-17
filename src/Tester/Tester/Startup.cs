@@ -12,6 +12,7 @@ using Tester.Models;
 using Tester.Services;
 using DAL;
 using Dto;
+using Tester.Migrations;
 
 namespace Tester
 {
@@ -27,9 +28,11 @@ namespace Tester
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ApplicationDbContext>();
+
             InitializeAndMigrateDb(services);
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -65,7 +68,7 @@ namespace Tester
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -79,7 +82,7 @@ namespace Tester
             }
 
             app.UseStaticFiles();
-
+            
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -88,6 +91,9 @@ namespace Tester
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            var roleSeed = new RoleSeed(Configuration);
+            roleSeed.CreateRoles(serviceProvider).Wait();
         }
     }
 }

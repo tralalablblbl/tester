@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Dto
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationRole : IdentityRole<Guid>
     {
-        public ApplicationUser() : base()
+        public ApplicationRole() : base()
         {
         }
-        public ApplicationUser(string userName): base(userName)
+        public ApplicationRole(string roleName) : base(roleName)
         {
         }
     }
