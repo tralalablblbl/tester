@@ -28,8 +28,6 @@ namespace Tester
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ApplicationDbContext>();
-
             InitializeAndMigrateDb(services);
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -38,12 +36,13 @@ namespace Tester
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<ApplicationDbContext>();
 
             services.AddMvc();
         }
         private void InitializeAndMigrateDb(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var connectionString = Configuration.GetConnectionString(Constant.DefaultConnection);
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));

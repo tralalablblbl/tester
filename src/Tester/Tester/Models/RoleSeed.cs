@@ -35,17 +35,17 @@ namespace Tester.Migrations
             }
 
             // TODO: update all users by role User
-            var section = configuration.GetSection("Settings");
+            var section = configuration.GetSection(Constant.Settings);
             var user = new ApplicationUser
             {
-                UserName = section.GetValue<string>("DefaultAdminName"),
-                Email = section.GetValue<string>("DefaultAdminEmail")
+                UserName = section.GetValue<string>(Constant.DefaultAdminName),
+                Email = section.GetValue<string>(Constant.DefaultAdminEmail)
             };
 
             var _user = await userManager.FindByEmailAsync(user.Email);
             if (_user == null)
             {
-                var createAdminUser = await userManager.CreateAsync(user, section.GetValue<string>("DefaultAdminPassword"));
+                var createAdminUser = await userManager.CreateAsync(user, section.GetValue<string>(Constant.DefaultAdminPassword));
                 if (createAdminUser.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, Constant.Administrator);

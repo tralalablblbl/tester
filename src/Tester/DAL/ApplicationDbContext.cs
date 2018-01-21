@@ -12,6 +12,10 @@ namespace DAL
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>
     {
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -34,6 +38,15 @@ namespace DAL
 
             builder.Entity<ApplicationRoleClaim>().ToTable("RoleClaims");
             builder.Entity<ApplicationUserToken>().ToTable("UserTokens");
+
+            //https://docs.microsoft.com/ru-ru/ef/core/modeling/relationships ef core does not allow m-to-m
+            builder.Entity<UserAnswerAnswer>()
+            .HasKey(t => new { t.UserAnswerId, t.AnswerId });
+
+            builder.Entity<UserAnswerAnswer>()
+                .HasOne(uaa => uaa.UserAnswer)
+                .WithMany(ua => ua.Answers)
+                .HasForeignKey(uaa => uaa.UserAnswerId);
         }
     }
 }
